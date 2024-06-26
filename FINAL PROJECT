@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration System | National Teachers College</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+    body {
+        background-color: #f0f2f5;
+    }
+    .container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        color: #007bff;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+    .form-group label {
+        font-weight: bold;
+    }
+    .table {
+        background-color: #ffffff;
+    }
+    .alert {
+        margin-top: 20px;
+    }
+    .mt-5 {
+        margin-top: 40px !important;
+    }
+    .navbar {
+        margin-bottom: 20px;
+        text-align: center; /* Center the navigation items */
+    }
+    .navbar-brand {
+        color: #007bff; /* Navbar brand color */
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+    .navbar-nav {
+        text-align: center; /* Center the nav links */
+    }
+    .navbar-nav .nav-link {
+        color: #007bff; /* Nav links color */
+        margin-right: 10px;
+    }
+    .navbar-nav .nav-link:hover {
+        color: #0056b3; /* Nav links hover color */
+    }
+    .sidebar {
+        background-color: #f8f9fa; /* Sidebar background color */
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 5px;
+    }
+    .sidebar h3 {
+        color: #007bff; /* Sidebar heading color */
+    }
+    .announcement {
+        margin-bottom: 15px;
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">National Teachers College</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-cog"></i> Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-user"></i> Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-9">
+                <h2>Student Registration Form</h2>
+
+                <?php
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+                $dbname = "tamaca";
+
+                // Create connection
+                $conn = new mysqli($servername, $username, $password, $dbname);
+
+                // Check connection
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    if (isset($_POST['update'])) {
+                        // Update record
+                        $id = $_POST['id'];
+                        $firstName = htmlspecialchars($_POST['first_name']);
+                        $middleName = htmlspecialchars($_POST['middle_name']);
+                        $lastName = htmlspecialchars($_POST['last_name']);
+                        $birthdate = htmlspecialchars($_POST['birthdate']);
+                        $previousSchool = htmlspecialchars($_POST['previous_school']);
+                        $shsSchool = htmlspecialchars($_POST['shs_school']);
+                        $gwa = htmlspecialchars($_POST['gwa']);
+                        $awardsHonors = htmlspecialchars($_POST['awards_honors']);
+
+                        $sql = "UPDATE students SET first_name='$firstName', middle_name='$middleName', last_name='$lastName', birthdate='$birthdate', previous_school='$previousSchool', shs_school='$shsSchool', gwa='$gwa', awards_honors='$awardsHonors' WHERE id='$id'";
+
+                        if ($conn->query($sql) === TRUE) {
+                            echo "<div class='alert alert-success'>Record updated successfully</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Error updating record: " . $conn->error . "</div>";
+                        }
+                    } elseif (isset($_POST['delete'])) {
+                        // Delete record
+                        $id = $_POST['delete_id'];
+
+                        $sql = "DELETE FROM students WHERE id='$id'";
+
+                        if ($conn->query($sql) === TRUE) {
+                            echo "<div class='alert alert-success'>Record deleted successfully</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Error deleting record: " . $conn->error . "</div>";
+                        }
+                    } else {
+                        // Insert new record
+                        $firstName = htmlspecialchars($_POST['first_name']);
+                        $middleName = htmlspecialchars($_POST['middle_name']);
+                        $lastName = htmlspecialchars($_POST['last_name']);
+                        $birthdate = htmlspecialchars($_POST['birthdate']);
+                        $previousSchool = htmlspecialchars($_POST['previous_school']);
+                        $shsSchool = htmlspecialchars($_POST['shs_school']);
+                        $gwa = htmlspecialchars($_POST['gwa']);
+                        $awardsHonors = htmlspecialchars($_POST['awards_honors']);
+
+                        $sql = "INSERT INTO students (first_name, middle_name, last_name, birthdate, previous_school, shs_school, gwa, awards_honors)
+                                VALUES ('$firstName', '$middleName', '$lastName', '$birthdate', '$previousSchool', '$shsSchool', '$gwa', '$awardsHonors')";
+
+                        if ($conn->query($sql) === TRUE) {
+                            echo "<div class='alert alert-success'>Form Submitted Successfully!</div>";
+                        } else {
+                            echo "<div class='alert alert-danger'>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                        }
+                    }
+                }
+
+                $result = $conn->query("SELECT * FROM students");
+
+                $conn->close();
+                ?>
+
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <input type="hidden" id="id" name="id">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="middle_name">Middle Name</label>
+                        <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="Enter your middle name">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthdate">Birthdate</label>
+                        <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="previous_school">Previous School</label>
+                        <input type="text" class="form-control" id="previous_school" name="previous_school" placeholder="Enter your previous school">
+                    </div>
+                    <div class="form-group">
+                        <label for="shs_school">SHS School</label>
+                        <input type="text" class="form-control" id="shs_school" name="shs_school" placeholder="Enter your SHS school">
+                    </div>
+                    <div class="form-group">
+                        <label for="gwa">GWA</label>
+                        <input type="number" step="0.01" class="form-control" id="gwa" name="gwa" placeholder="Enter your GWA">
+                    </div>
+                    <div class="form-group">
+                        <label for="awards_honors">Awards/Honors</label>
+                        <textarea class="form-control" id="awards_honors" name="awards_honors" rows="3" placeholder="Enter any awards or honors"></textarea>
+                    </div>
+                    <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" name="update" class="btn btn-warning">Update</button>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <h3>Announcements</h3>
+                    <div class="announcement">
+                        <p><strong>Enrollment Ongoing</strong></p>
+                        <p>Enroll now for the upcoming school year.</p>
+                    </div>
+                    <div class="announcement">
+                        <p><strong>Start of School Year</strong></p>
+                        <p>School year starts on September 1, 2024.</p>
+                    </div>
+                    <!-- Add more announcements as needed -->
+                </div>
+            </div>
+        </div>
+
+        <h2 class="mt-5">Student List</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Last Name</th>
+                    <th>Birthdate</th>
+                    <th>Previous School</th>
+                    <th>SHS School</th>
+                    <th>GWA</th>
+                    <th>Awards/Honors</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo $row['id']; ?></td>
+                    <td><?php echo $row['first_name']; ?></td>
+                    <td><?php echo $row['middle_name']; ?></td>
+                    <td><?php echo $row['last_name']; ?></td>
+                    <td><?php echo $row['birthdate']; ?></td>
+                    <td><?php echo $row['previous_school']; ?></td>
+                    <td><?php echo $row['shs_school']; ?></td>
+                    <td><?php echo $row['gwa']; ?></td>
+                    <td><?php echo $row['awards_honors']; ?></td>
+                    <td>
+                        <!-- Update button -->
+                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                            <button type="submit" name="update" class="btn btn-sm btn-warning">Update</button>
+                        </form>
+                        <!-- Delete button -->
+                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                            <button type="submit" name="delete" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('table tbody tr').forEach(row => {
+                row.addEventListener('click', () => {
+                    document.getElementById('id').value = row.children[0].innerText;
+                    document.getElementById('first_name').value = row.children[1].innerText;
+                    document.getElementById('middle_name').value = row.children[2].innerText;
+                    document.getElementById('last_name').value = row.children[3].innerText;
+                    document.getElementById('birthdate').value = row.children[4].innerText;
+                    document.getElementById('previous_school').value = row.children[5].innerText;
+                    document.getElementById('shs_school').value = row.children[6].innerText;
+                    document.getElementById('gwa').value = row.children[7].innerText;
+                    document.getElementById('awards_honors').value = row.children[8].innerText;
+                });
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
